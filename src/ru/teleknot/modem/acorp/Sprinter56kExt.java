@@ -94,10 +94,6 @@ public class Sprinter56kExt {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println("test ACORP Sprinter@56k Ext");
-    }
-
     private SerialPort comPort;
     private String portName;
     public static final byte[] AT     = "AT\r\n".getBytes(StandardCharsets.US_ASCII);
