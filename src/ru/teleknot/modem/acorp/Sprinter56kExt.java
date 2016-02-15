@@ -87,15 +87,21 @@ public class Sprinter56kExt {
     public void StartWaitNMBR()
     {
         System.out.println("CHECKPOINT: wait incoming call on RS232 port " + portName);
+        //Pattern p = Pattern.compile(
+        //       "^(\r\nDATE\\s=\\s)([0-9]{0,})(\r\nTIME\\s=\\s)([0-9]{0,})(\r\nNMBR\\s=\\s)([0-9]{0,})(\r\n)$"
+        //);
         Pattern p = Pattern.compile(
-                "^(\r\nDATE\\s=\\s)([0-9]{0,})(\r\nTIME\\s=\\s)([0-9]{0,})(\r\nNMBR\\s=\\s)([0-9]{0,})(\r\n)$"
+                "(DATE\\s=\\s)([0-9]{0,});(TIME\\s=\\s)([0-9]{0,});(NMBR\\s=\\s)([0-9]{0,})"
         );
         while (true){
             byte[] readBuffer = new byte[1024];
             int numRead = comPort.readBytes(readBuffer, readBuffer.length);
             if(numRead != 0) {
                 String str = getStrFromBuf(readBuffer,numRead);
-                //System.out.println("str='"+str+"'");
+                System.out.println("incoming string='"+str+"'");
+                str = str.trim();
+                str = str.replaceAll("(\r\n|\n\r|\r|\n)", ";");
+                System.out.println("trimmed & replaced incoming string='"+str+"'");
                 Matcher m = p.matcher(str);
                 if (m.matches()) {
                     String callerid =  m.group(6).toString();
@@ -109,6 +115,8 @@ public class Sprinter56kExt {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } else {
+                    System.out.println("no match with regexp, str='"+str+"'");
                 }
             } else {
                 //System.out.println("READ ZERO byte");
